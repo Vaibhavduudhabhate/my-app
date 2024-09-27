@@ -202,7 +202,7 @@ const PropertyModel = ({ btn_title,statelist,propertyListingFun }) => {
             }`}
           >
             <form onSubmit={formik.handleSubmit}>
-              <div className="w-full lg:w-[780px] sm:w-full  border border-border-A4A4A9 rounded-lg shadow-lg relative flex flex-col bg-white outline-none focus:outline-none">
+              <div className="w-full lg:w-[780px] sm:w-full l:mt-0 xl:mt-0 mt-[40px] border border-border-A4A4A9 rounded-lg shadow-lg relative flex flex-col bg-white outline-none focus:outline-none">
                 <div className="flex items-start justify-between pt-6 pr-6 pl-6 pb-0 rounded-t ">
                   <div className="modelHeading">
                     <h3 className="font-bold text-15151C text-lg w-full h-7">
@@ -223,8 +223,8 @@ const PropertyModel = ({ btn_title,statelist,propertyListingFun }) => {
                 </div>
                 <div className="relative p-[32px] flex-auto">
                   <div className="rounded  w-full">
-                    <div className="mailNofields flex flex-row items-start">
-                      <label className="block w-[50%] mr-[20px]">
+                    <div className="mailNofields flex flex-row max-[600px]:flex-col items-start">
+                      <label className="block w-[50%] max-[600px]:w-[100%] mr-[20px]">
                         <span className=" block text-sm font-medium text-slate-700">
                           Property Name
                         </span>
@@ -244,7 +244,7 @@ const PropertyModel = ({ btn_title,statelist,propertyListingFun }) => {
                             </div>
                           )}
                       </label>
-                      <label className="block w-[50%]">
+                      <label className="block w-[50%] max-[600px]:w-[100%]">
                         <span className=" block text-sm font-medium text-slate-700">
                           Enter Postal Code
                         </span>
@@ -264,7 +264,7 @@ const PropertyModel = ({ btn_title,statelist,propertyListingFun }) => {
                           )}
                       </label>
                     </div>
-                    <div className="RoleSelectFields flex flex-row mt-[20px]">
+                    <div className="RoleSelectFields flex flex-row max-[600px]:flex-col mt-[20px]">
                       {/* <label className="block w-[50%] mr-[20px]">
                                                 <span className=" block text-sm font-medium text-slate-700">
                                                     Role
@@ -278,7 +278,7 @@ const PropertyModel = ({ btn_title,statelist,propertyListingFun }) => {
                                                 </span>
                                                 <input type="number" name="Mobile Number" className="mt-2 px-[14px] py-[10px] bg-white border shadow-sm border-slate-300 placeholder-slate-400 w-full sm:text-sm" placeholder="enter your phone number" />
                                             </label> */}
-                      <div className="selectDiv w-[50%] mr-[20px] flex flex-col items-start">
+                      <div className="selectDiv w-[50%] max-[600px]:w-[100%] mr-[20px] flex flex-col items-start">
                         <label
                           htmlFor="countries"
                           className="block text-sm font-medium text-slate-700"
@@ -398,7 +398,7 @@ const PropertyModel = ({ btn_title,statelist,propertyListingFun }) => {
                           </div>
                         )}
                       </div> */}
-                      <label className="block w-[50%]">
+                      <label className="block w-[50%] max-[600px]:w-[100%]">
                         <span className="block text-sm font-medium text-slate-700">
                         City
                         </span>
@@ -422,8 +422,8 @@ const PropertyModel = ({ btn_title,statelist,propertyListingFun }) => {
                         )}
                       </label>
                     </div>
-                    <div className="mailNofields flex flex-row mt-[20px]">
-                      <label className="block w-[50%] mr-[20px]">
+                    <div className="mailNofields flex flex-row max-[600px]:flex-col mt-[20px]">
+                      <label className="block w-[50%] max-[600px]:w-[100%] mr-[20px]">
                         <span className="block text-sm font-medium text-slate-700">
                         Street Address
                         </span>
@@ -446,7 +446,7 @@ const PropertyModel = ({ btn_title,statelist,propertyListingFun }) => {
                           </div>
                         )}
                       </label>
-                      <label className="block w-[50%]">
+                      <label className="block w-[50%] max-[600px]:w-[100%]">
                         <span className=" block text-sm font-medium text-slate-700">
                           Total Unit
                         </span>
@@ -471,8 +471,8 @@ const PropertyModel = ({ btn_title,statelist,propertyListingFun }) => {
                           )}
                       </label>
                     </div>
-                    <div className="mailNofields flex flex-row mt-[20px]">
-                      <label className="block w-[50%] mr-[20px]">
+                    <div className="mailNofields flex flex-row max-[600px]:flex-col mt-[20px]">
+                      <label className="block w-[50%] max-[600px]:w-[100%] mr-[20px]">
                         <span className=" block text-sm font-medium text-slate-700">
                           Property Contact Number
                         </span>
@@ -492,7 +492,7 @@ const PropertyModel = ({ btn_title,statelist,propertyListingFun }) => {
                             </div>
                           )}
                       </label>
-                      <label className="block w-[50%] ">
+                      <label className="block w-[50%] max-[600px]:w-[100%]">
                         <span className="block text-sm font-medium text-slate-700">
                           Property Email
                         </span>

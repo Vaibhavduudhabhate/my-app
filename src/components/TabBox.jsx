@@ -126,18 +126,20 @@ export const TabBox = ({
     // console.log("filterValue", property_id);
     // const authHeader = request.headers.get("authorization");
     // alert(authHeader)
-    const tabKey = summaryTab[activeTab]?.key; // Get the key of the active tab
-    if (tabKey) {
-      // Fetch data based on the active tab's key
-      const url = summaryTabContent[tabKey]; // Get the URL for the active tab
-      // console.log(url[0]);
-      getActiveTabUrl.current = url
-      if (fetchGraphData.current) return;
-      fetchGraphData.current = true;
-      fetchData();
-      // fetchData(url)
-      //   .then(json => setData(json))
-      //   .catch(error => console.error("Error fetching data:", error));
+    if(areaChart == "true"){
+      const tabKey = summaryTab[activeTab]?.key; // Get the key of the active tab
+      if (tabKey) {
+        // Fetch data based on the active tab's key
+        const url = summaryTabContent[tabKey]; // Get the URL for the active tab
+        // console.log(url[0]);
+        getActiveTabUrl.current = url
+        if (fetchGraphData.current) return;
+        fetchGraphData.current = true;
+        fetchData();
+        // fetchData(url)
+        //   .then(json => setData(json))
+        //   .catch(error => console.error("Error fetching data:", error));
+      }
     }
   }, [activeTab, filterValue, property_id]);
   const fetchData = async () => {
@@ -247,7 +249,7 @@ export const TabBox = ({
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            endpoint: url[0],
+            endpoint: fetchOverlayGraphData.current[0],
             currentMonth,
             previousMonth,
           }),
@@ -372,7 +374,7 @@ export const TabBox = ({
           <div className="w-full md:w-4/12 mb-2 md:mb-0">
             <h3 className="text-lg font-normal text-101828">Historical Data</h3>
           </div>
-          <div className="w-full md:w-8/12 flex flex-wrap justify-start md:justify-end">
+          <div className="w-full 2xl:w-8/12 xl:w-8/12 lg:w-8/12 md:w-full sm:w-full 2xl:flex xl:flex lg:flex flex-wrap justify-start 2xl:justify-end xl:justify-end lg:justify-end md:justify-normal sm:justify-normal justify-normal md:grid md:grid-cols-2">
             <div className="relative mb-2 md:mb-0 md:ml-2 w-full md:w-auto">
               {/* <select
                                 id="property_id"
@@ -397,7 +399,7 @@ export const TabBox = ({
                                 )}
                             </select> */}
               <div
-                className="relative inline-block text-left"
+                className="relative inline-block text-left w-full"
                 ref={dropdownRef}
               >
                 <div>
@@ -565,7 +567,7 @@ export const TabBox = ({
       )}
       {displaySingleGraphTab != undefined && (
         <div className="tabs">
-          <ul className="flex pb-6">
+          <ul className="flex flex-wrap pb-6">
             {summaryTab.map((tab, index) => (
               // console.log(index)
               <li

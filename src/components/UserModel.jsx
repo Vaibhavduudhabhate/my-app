@@ -208,7 +208,7 @@ const UserModal = ({ btn_title, dataProperty, listingFunction }) => {
               showModal ? "scale-100 animate-fadeIn" : "scale-0"
             }`}
           >
-            <div className="w-[780px] border border-border-A4A4A9 rounded-lg shadow-lg relative flex flex-col bg-white outline-none focus:outline-none">
+            <div className="w-full lg:w-[780px] sm:w-full l:mt-0 xl:mt-0 mt-[60px] border border-border-A4A4A9 rounded-lg shadow-lg relative flex flex-col bg-white outline-none focus:outline-none">
               <div className="flex items-start justify-between pt-6 pr-6 pl-6 pb-0 rounded-t">
                 <div className="modelHeading">
                   <h3 className="font-bold text-15151C text-lg">Add User</h3>
@@ -273,8 +273,8 @@ const UserModal = ({ btn_title, dataProperty, listingFunction }) => {
                       )}
                   </label>
 
-                  <div className="mailNofields flex flex-row mt-[20px]">
-                    <label className="block w-[50%] mr-[20px]">
+                  <div className="mailNofields flex flex-row max-[600px]:flex-col mt-[20px]">
+                    <label className="block w-[50%] max-[600px]:w-[100%] mr-[20px]">
                       <span className="block text-sm font-medium text-slate-700">
                         Email Address (Username)
                       </span>
@@ -298,7 +298,7 @@ const UserModal = ({ btn_title, dataProperty, listingFunction }) => {
                         </div>
                       )}
                     </label>
-                    <label className="block w-[50%]">
+                    <label className="block w-[50%] max-[600px]:w-[100%]">
                       <span className=" block text-sm font-medium text-slate-700">
                         Password
                       </span>
@@ -318,8 +318,8 @@ const UserModal = ({ btn_title, dataProperty, listingFunction }) => {
                       )}
                     </label>
                   </div>
-                  <div className="mailNofields flex flex-row">
-                    <div className="selectDiv  w-[50%] mr-[20px] flex flex-col mt-5">
+                  <div className="mailNofields flex flex-row max-[600px]:flex-col">
+                    <div className="selectDiv  w-[50%] max-[600px]:w-[100%] mr-[20px] flex flex-col mt-5">
                       <label
                         htmlFor="property"
                         className="block text-sm font-medium text-gray-900"
@@ -371,7 +371,7 @@ const UserModal = ({ btn_title, dataProperty, listingFunction }) => {
                         </div>
                       )}
                     </div>
-                    <div className="flex mt-5 justify-center flex-col w-[50%]">
+                    <div className="flex mt-5 justify-center flex-col w-[50%] max-[600px]:w-[100%]">
                       <label
                         htmlFor="property"
                         className="block text-sm font-medium text-gray-900"

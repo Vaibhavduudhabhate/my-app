@@ -28,7 +28,7 @@ const DailyReportTable = ({
   showFilterOnPage,
   apiEndPoint,
   displayLinkWithIcon,
-  makePropertyApiCall // property call
+  makePropertyApiCall // property call 
 }) => {
   const [reportData, setReportData] = useState([]);
   const [intialdata, setIntialdata] = useState([]);
@@ -39,15 +39,18 @@ const DailyReportTable = ({
     pageIndex: 0, //initial page index
     pageSize: maximumDisplayData, //default page size
   });
+  const [current_page, setCurrent_page] = useState(1);
   const [filteredData, setFilteredData] = useState([]);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
   const verticalDropDown = useRef(null);
   const loading = useRef(false);
+  const loadingReportData = useRef("true");
   const [error,setError] = useState(false);
   const isError = useRef();
   const [propertyData, setPropertyData] = useState(false); //storing property data
   const [selectedOptions, setSelectedOptions] = useState([]);
+  const [filteredReportData, setFilteredReportData] = useState([]);
   const fetchDailyReportdata = useRef(); // call daily report api one time
   const fetchDailyReportPropertyApi = useRef(); // calling property api in daily report table oen time
 
@@ -125,7 +128,7 @@ const exportExcel = (rows) => {
   };
   const columns = [
     {
-      accessorKey: "propertyDetails.property_name",
+      accessorKey: "property_name",
       header: "Property Name",
       cell: (props) => {
         const property_name =
@@ -303,25 +306,43 @@ const exportExcel = (rows) => {
     if (fetchDailyReportdata.current) return;
     fetchDailyReportdata.current = true;
     fetchData();
-  },[])
+  },[current_page, filteredReportData])
   // api define to call daily report listing start
   const fetchData = async () => {
+    loadingReportData.current = "true";
     try {
       const response = await fetch(`${apiEndPoint}`, {
-        method: "GET",
+        method: "POST",
+        body: JSON.stringify({
+          current_page,
+          filteredReportData,
+        }),
         cache: "no-cache",
       });
       if (!response.ok) {
         throw new Error("Network response was not ok");
       }
       const records = await response.json();
-      // console.log("records", records); // For debugging
-      setReportData(records);
-      setIntialdata(records);
-      setFilteredData(records);
+      console.log("records", records); // For debugging
+      switch(true){
+        case records && records.data && Array.isArray(records.data) :
+          setReportData(records);
+          setIntialdata(records);
+          setFilteredData(records);
+          setError(false);
+          break;
+        case records && !Array.isArray(records) :
+          setError(true);
+          break;
+      }
+      // setReportData(records);
+      // setIntialdata(records);
+      // setFilteredData(records);
     } catch (error) {
       console.error("Error fetching data:", error);
-      // setError.current = "true"
+      setError(true)
+    } finally{
+      loadingReportData.current = "false";
     }
   };
   // api define to call daily report listing end
@@ -359,7 +380,7 @@ const exportExcel = (rows) => {
   //   api call for fetching all daily report data end
   const table = useReactTable({
     columns,
-    data: reportData || [],
+    data: reportData.data || [],
     state: {
       pagination, // Ensure this is your pagination state
     },
@@ -411,28 +432,38 @@ const exportExcel = (rows) => {
 
     return pageNumbers;
   };
-  useEffect(() => {
-    if (selectedOptions.length === 0) {
-      setError(false)
-      setReportData(intialdata); // Show all data if no option is selected
-    } else {
-      const filteredData = intialdata.filter((item) =>
-        selectedOptions.includes(item.propertyDetails.property_id)
-      );
-      // console.log(filteredData);
-      
-      if (filteredData.length == 0) {
-        // alert("")
-        setError(true)
-      }
-      else{
-        // Update the user data with the filtered data
-        // setError.current = "false";
-        setError(false)
-        setReportData(filteredData);
-      }
+  // pagination logic based on api
+  const handlePageChange = async (newPage) => {
+    // console.log(newPage);
+    if (newPage < 1 || newPage > reportData.total_page) {
+      return;
     }
-  }, [selectedOptions, intialdata]);
+    fetchDailyReportdata.current = false
+    loadingReportData.current = "true";
+    setCurrent_page(newPage);
+  };
+  // useEffect(() => {
+  //   if (selectedOptions.length === 0) {
+  //     setError(false)
+  //     setReportData(intialdata); // Show all data if no option is selected
+  //   } else {
+  //     const filteredData = intialdata.filter((item) =>
+  //       selectedOptions.includes(item.propertyDetails.property_id)
+  //     );
+  //     // console.log(filteredData);
+      
+  //     if (filteredData.length == 0) {
+  //       // alert("")
+  //       setError(true)
+  //     }
+  //     else{
+  //       // Update the user data with the filtered data
+  //       // setError.current = "false";
+  //       setError(false)
+  //       setReportData(filteredData);
+  //     }
+  //   }
+  // }, [selectedOptions, intialdata]);
   const handleCheckboxChange = (property_id) => {
     const newSelectedOptions = selectedOptions.includes(property_id)
       ? selectedOptions.filter((id) => id !== property_id)
@@ -464,11 +495,51 @@ const exportExcel = (rows) => {
       };
     }, [verticalDropDown]);
   const handleOptionToggle = (option) => {
-    setSelectedOptions((prevSelected) =>
-      prevSelected.includes(option)
-        ? prevSelected.filter((id) => id !== option)
-        : [...prevSelected, option]
-    );
+    // console.log(selectedOptions);
+    
+    setSelectedOptions((prevSelected) =>{
+      // console.log(prevSelected);
+      
+      let updatedSelected;
+      if (prevSelected.includes(option)) {
+        // Remove the option if it's already selected
+        updatedSelected = prevSelected.filter((id) => id !== option);
+      } else {
+        // Add the option if it's not selected
+        updatedSelected = [...prevSelected, option];
+      }
+      // console.log("concatenatedString",updatedSelected);
+      setFilteredReportData(updatedSelected);
+      fetchDailyReportdata.current = false;
+      loadingReportData.current = "true";
+      return updatedSelected;
+      // prevSelected.includes(option)
+      //   ? prevSelected.filter((id) => id !== option)
+      //   : [...prevSelected, option]
+      // }
+  });
+    // setSelectedOptions((prevSelected) => {
+    //   let updatedSelected;
+
+    //   if (prevSelected.includes(option)) {
+    //     // Remove the option if it's already selected
+    //     updatedSelected = prevSelected.filter((id) => id !== option);
+    //   } else {
+    //     // Add the option if it's not selected
+    //     updatedSelected = [...prevSelected, option];
+    //   }
+    //   console.log("concatenatedString",updatedSelected);
+
+    //   // Concatenate the selected options into a string
+    //   // const concatenatedString = updatedSelected.join(",");
+
+    //   // // Update the other array with the concatenated string
+    //   // setPropertyId(concatenatedString);
+    //   // fetchGraphData.current = false;
+
+    //   // return updatedSelected;
+    // });
+    
   };
   // useEffect(() => {
   //   document.addEventListener('mousedown', handleClickOutside);
@@ -483,10 +554,10 @@ const exportExcel = (rows) => {
           <div className="w-full md:w-4/12 mb-2 md:mb-0">
             <h3 className="text-lg font-normal text-101828">List of Reports</h3>
           </div>
-          <div className="w-full md:w-8/12 flex flex-wrap justify-start md:justify-end">
-            <div className="relative mb-2 md:mb-0 md:ml-2 w-full md:w-auto">
+          <div className="w-full md:w-8/12 2xl:flex xl:flex lg:flex md:flex flex-wrap justify-start md:justify-end sm:grid sm:grid-cols-2 sm:gap-[5px] block">
+            <div className="relative mb-2 md:mb-0 md:ml-2 w-full md:w-auto sm:w-auto">
               <div
-                className="relative inline-block text-left"
+                className="relative inline-block text-left 2xl:w-auto xl:w-auto lg:w-auto md:w-auto sm:w-auto w-full"
                 ref={dropdownRef}
               >
                 <div>
@@ -494,7 +565,7 @@ const exportExcel = (rows) => {
                     type="button"
                     id="dropdownToggle"
                     onClick={handleToggleClick}
-                    className="inline-flex items-center min-w-72 h-10 justify-between w-full pr-7 pl-4 border border-22222E shadow-sm bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-indigo-500"
+                    className="inline-flex items-center min-w-72 h-10 justify-between w-full pr-7 pl-4 border border-22222E shadow-sm bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-indigo-500 max-[340px]:min-w-full"
                   >
                     {/* {selectedOptions.length > 0
               ? selectedOptions
@@ -543,7 +614,6 @@ const exportExcel = (rows) => {
                     </div>
                   </div>
                 )}
-              </div>
               <div className="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
                 <svg
                   width="13"
@@ -561,9 +631,10 @@ const exportExcel = (rows) => {
                   />
                 </svg>
               </div>
+              </div>
             </div>
             <button
-              className="md:ml-2 flex items-center border-1x border-black text-E6EAEB leading-10 bg-custom_bg_button text-15151C text-lg py-0 px-5 font-semibold h-10"
+              className="md:ml-2 flex items-center border-1x border-black text-E6EAEB leading-10 bg-custom_bg_button text-15151C text-lg py-0 px-5 font-semibold h-10 2xl:w-auto xl:w-auto lg:w-auto md:w-auto sm:w-auto sm:justify-center justify-center w-full"
               type="button"
               onClick={() => exportExcel(table.getFilteredRowModel().rows)}
             >
@@ -588,7 +659,7 @@ const exportExcel = (rows) => {
           </div>
         </div>
       )}
-      {loading.current == "true" ? (
+      {loadingReportData.current == "true" ? (
         <Loading />
       ) : error || isError.current == "true" ? (
         <table className="w-full">
@@ -606,71 +677,80 @@ const exportExcel = (rows) => {
       ) : (
         <>
           <div className="p-4">
-            <table className="min-w-full divide-y divide-D0D5DD divide-dashed">
-              <thead>
-                {table.getHeaderGroups().map((headerGroup) => (
-                  <tr className="tr" key={headerGroup.id}>
-                    {headerGroup.headers.map((header) => (
-                      <th
-                        className="th relative pl-0 pr-4 py-3 text-left text-sm font-normal text-667085 uppercase tracking-wider whitespace-nowrap"
-                        key={header.id}
-                      >
-                        {header.column.columnDef.header}
-                        {header.column.getCanSort() && (
-                          <span
-                            className="forArrow inline-block relative top-1.5"
-                            onClick={header.column.getToggleSortingHandler()}
-                          >
-                            {header.column.getIsSorted() === "asc" ? (
-                              <ChevronUp className="cursor-pointer" />
-                            ) : header.column.getIsSorted() === "desc" ? (
-                              <ChevronDown className="cursor-pointer" />
-                            ) : (
-                              <ChevronUp className="cursor-pointer" />
-                            )}
-                          </span>
-                        )}
-                      </th>
-                    ))}
-                  </tr>
-                ))}
-              </thead>
-              <tbody className="bg-white divide-y divide-D0D5DD divide-dashed">
-                {table.getRowModel().rows.map((row) => (
-                  // console.log(row)
-                  <tr className="tr" key={row.id}>
-                    {row.getVisibleCells().map((cell) => (
-                      <td
-                        className="td pl-0 pr-4 py-4 whitespace-normal text-sm text-344054 font-normal"
-                        key={cell.id}
-                      >
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext()
-                        )}
-                      </td>
-                    ))}
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+            <div className="outer-table-div overflow-x-auto">
+              <table className="2xl:min-w-full divide-y divide-D0D5DD divide-dashed">
+                <thead>
+                  {table.getHeaderGroups().map((headerGroup) => (
+                    <tr className="tr" key={headerGroup.id}>
+                      {headerGroup.headers.map((header) => (
+                        <th
+                          className="th relative pl-0 pr-4 py-3 text-left text-sm font-normal text-667085 uppercase tracking-wider whitespace-nowrap align-bottom"
+                          key={header.id}
+                        >
+                          {header.column.columnDef.header}
+                          {header.column.getCanSort() && (
+                            <span
+                              className="forArrow inline-block relative top-1.5"
+                              onClick={header.column.getToggleSortingHandler()}
+                            >
+                              {header.column.getIsSorted() === "asc" ? (
+                                <ChevronUp className="cursor-pointer" />
+                              ) : header.column.getIsSorted() === "desc" ? (
+                                <ChevronDown className="cursor-pointer" />
+                              ) : (
+                                <ChevronUp className="cursor-pointer" />
+                              )}
+                            </span>
+                          )}
+                        </th>
+                      ))}
+                    </tr>
+                  ))}
+                </thead>
+                <tbody className="bg-white divide-y divide-D0D5DD divide-dashed">
+                  {table.getRowModel().rows.map((row) => (
+                    // console.log(row)
+                    <tr className="tr" key={row.id}>
+                      {row.getVisibleCells().map((cell) => (
+                        <td
+                          className="td pl-0 pr-4 py-4 whitespace-normal text-sm text-344054 font-normal"
+                          key={cell.id}
+                        >
+                          {flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext()
+                          )}
+                        </td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
             {/* pagination start */}
             {showpaginationButtons != undefined && (
-              <div className="flex justify-between items-center mt-4 py-3">
+              <div className="flex justify-between items-center mt-4 py-3 max-[415px]:justify-center max-[415px]:gap-[5px]">
                 <button
+                  // onClick={() =>
+                  //   table.setPageIndex(
+                  //     table.getState().pagination.pageIndex - 1
+                  //   )
+                  // }
                   onClick={() =>
-                    table.setPageIndex(
-                      table.getState().pagination.pageIndex - 1
-                    )
+                    handlePageChange(reportData.page - 1)
                   }
-                  disabled={!table.getCanPreviousPage()}
-                  className="border border-D0D5DD font-semibold px-3.5 py-2 flex text-344054 text-sm gap-2"
+                  disabled={
+                    reportData.page === 1
+                  }
+                  className={`border border-D0D5DD font-semibold px-3.5 py-2 flex text-344054 text-sm gap-2 ${reportData.page === 1 ? "cursor-not-allowed bg-[#cbd5e0]" : "cursor-pointer"}`}
                 >
                   <ArrowLeft className="text-344054 w-5 h-5" />
-                  Previous
+                  <span className="2xl:block xl:block lg:block md:block sm:block max-[415px]:hidden">
+                    Previous
+                  </span>
                 </button>
-                <div className="flex-1 flex justify-center items-center space-x-1">
-                  {generatePageNumbers().map((pageNumber, index) =>
+                <div className="flex-1 flex justify-center items-center space-x-1 max-[415px]:flex-none">
+                  {/* {generatePageNumbers().map((pageNumber, index) =>
                     pageNumber === "..." ? (
                       <span
                         key={index}
@@ -691,18 +771,63 @@ const exportExcel = (rows) => {
                         {pageNumber + 1}
                       </button>
                     )
-                  )}
+                  )} */}
+                  {Array.from(
+                          { length: reportData.total_page },
+                          (_, index) => index + 1
+                        )
+                          .filter(
+                            (pageNumber) =>
+                              // Display only a range of pages(e.g., 2 pages before and 2 pages after the current page)
+                              pageNumber >=
+                                Math.max(1, reportData.page - 2) &&
+                              pageNumber <=
+                                Math.min(
+                                  reportData.total_page,
+                                  reportData.page + 2
+                                )
+                          )
+                          .map((pageNumber) => (
+                            <button
+                              key={pageNumber}
+                              onClick={() => handlePageChange(pageNumber)}
+                              // ml={2}
+                              background={
+                                pageNumber === reportData.page
+                                  ? "red"
+                                  : "gray.300"
+                              }
+                              color={
+                                pageNumber === reportData.page
+                                  ? "white"
+                                  : "black"
+                              }
+                              className={`pageNumber rounded px-4 py-2 text-sm font-normal ${pageNumber == reportData.page
+                            ? "bg-E6EAEB text-22222E"
+                            : "text-667085"}`}
+                            >
+                              {pageNumber}
+                            </button>
+                          ))}
                 </div>
                 <button
+                  // onClick={() =>
+                  //   table.setPageIndex(
+                  //     table.getState().pagination.pageIndex + 1
+                  //   )
+                  // }
                   onClick={() =>
-                    table.setPageIndex(
-                      table.getState().pagination.pageIndex + 1
-                    )
+                    handlePageChange(reportData.page + 1)
                   }
-                  disabled={!table.getCanNextPage()}
-                  className={`border border-D0D5DD font-semibold px-4 py-2 flex text-344054 text-sm gap-2`}
+                  // disabled={!table.getCanNextPage()}
+                  disabled={
+                    reportData.page === reportData.total_page
+                  }
+                  className={`border border-D0D5DD font-semibold px-4 py-2 flex text-344054 text-sm gap-2 ${reportData.page === reportData.total_page ? "cursor-not-allowed bg-[#cbd5e0]" : "cursor-pointer"}`}
                 >
-                  Next
+                  <span className="max-[415px]:hidden">
+                    Next
+                  </span>
                   <ArrowRight className="text-344054 w-5 h-5" />
                 </button>
               </div>

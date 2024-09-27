@@ -23,7 +23,7 @@ const ReportForm = ({ currencyData }) => {
         const selectedId = event.target.value;
         const el = document.getElementById("property_id");
         const selectedOption = el.options[el.selectedIndex].text;
-        console.log(selectedOption)
+        // console.log(selectedOption)
         propertyName.current = selectedOption
             formik.handleChange(event);
             try {
@@ -56,7 +56,7 @@ const ReportForm = ({ currencyData }) => {
                     throw new Error('Network response was not ok');
                 }
                 const records = await response.json();
-                console.log("records", records); // For debugging
+                // console.log("records", records); // For debugging
                 setPropertyData(records);
             } catch (error) {
                 console.error('Error fetching data:', error);
@@ -259,13 +259,14 @@ const ReportForm = ({ currencyData }) => {
 
     useEffect(() => {
         //Vacant = Total Units - Occupied + Move Outs - Approved Move Ins.
+        // new logic No. of Vacant = Total Units - No. of Occupied Units
         const totalUnits = parseFloat(formik.values.totalUnits) || 0;
         const occupiedUnits = parseFloat(formik.values.occupiedUnits) || 0;
-        const noOfMoveOuts = parseFloat(formik.values.noOfMoveOuts) || 0;
-        const approvedMoveIns = parseFloat(formik.values.approvedMoveIns) || 0;
+        // const noOfMoveOuts = parseFloat(formik.values.noOfMoveOuts) || 0;
+        // const approvedMoveIns = parseFloat(formik.values.approvedMoveIns) || 0;
 
-        const totalVacant = totalUnits - occupiedUnits + noOfMoveOuts - approvedMoveIns
-
+        // const totalVacant = totalUnits - occupiedUnits + noOfMoveOuts - approvedMoveIns;
+        const totalVacant = totalUnits - occupiedUnits;
         console.log("totalVacant");
         console.log(totalVacant);
 
@@ -525,7 +526,8 @@ const ReportForm = ({ currencyData }) => {
                                 )}
                         </div>
                     </div>
-                    <div className="w-full mt-2 md:flex-1">
+                    {/* total gross collection commented need to remove */}
+                    {/* <div className="w-full mt-2 md:flex-1">
                         <label className="text-sm text-344054 font-normal mb-1.5 block">
                             Total Gross collection till today (Sum of total
                             collection of all months)
@@ -545,7 +547,9 @@ const ReportForm = ({ currencyData }) => {
                                     {formik.errors.grossCollection}
                                 </div>
                             )}
-                    </div>
+                    </div> */}
+                    {/* total gross collection commented need to remove */}
+
                 </div>
                 <div className="text-sm font-semibold text-[#101828] mb-2">
                     Delinquency Data
@@ -694,7 +698,7 @@ const ReportForm = ({ currencyData }) => {
                         </div>
                         <div className="w-full mb-2 md:flex-1 md:mb-0">
                             <label className="text-sm text-344054 font-normal mb-1.5 block">
-                                No. of Occupied
+                                No. of Occupied Today
                             </label>
                             <input
                                 type="text"
@@ -715,7 +719,7 @@ const ReportForm = ({ currencyData }) => {
                     <div className="flex flex-wrap  items-start md:flex-nowrap gap-x-2 md:mt-2">
                         <div className="w-full mb-2 md:flex-1 md:mb-0">
                             <label className="text-sm text-344054 font-normal mb-1.5 block">
-                                No. of move-outs
+                                No. of Futuew move-outs
                             </label>
                             <input
                                 type="text"
@@ -734,7 +738,7 @@ const ReportForm = ({ currencyData }) => {
                         </div>
                         <div className="w-full mb-2 md:flex-1 md:mb-0">
                             <label className="text-sm text-344054 font-normal mb-1.5 block">
-                                No. of approved move-ins
+                                No. of approved future move-ins
                             </label>
                             <input
                                 type="text"

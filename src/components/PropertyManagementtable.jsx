@@ -500,11 +500,11 @@ const PropertyManagementtable = () => {
   };
   return (
     <>
-      <div className="p-4 flex justify-between flex-wrap items-center">
-        <div className="w-full md:w-4/12 mb-2 md:mb-0">
+      <div className="p-4 flex justify-between flex-wrap items-center max-[788px]:justify-center max-[788px]:flex-col">
+        <div className="w-auto 2xl:w-4/12 xl:w-4/12 lg:w-4/12 md:w-auto mb-2 md:mb-0">
           <h3 className="text-lg font-normal text-101828">Properties</h3>
         </div>
-        <div className="w-full md:w-8/12 flex flex-wrap justify-start md:justify-end">
+        <div className="max-[768px]:w-full max-[768px]:justify-center 2xl:w-8/12 xl:w-8/12 lg:w-8/12 md:w-auto flex flex-wrap justify-start md:justify-end">
           <div className="relative mb-2 md:mb-0 md:ml-2 w-full md:w-auto">
             <input
               type="text"
@@ -550,57 +550,59 @@ const PropertyManagementtable = () => {
             </table>
           ) : (
           <div className="p-4">
-            <table className="min-w-full divide-y divide-D0D5DD divide-dashed">
-              <thead>
-                {table.getHeaderGroups().map((headerGroup) => (
-                  <tr className="tr" key={headerGroup.id}>
-                    {headerGroup.headers.map((header) => (
-                      <th
-                        className="th relative pl-0 pr-4 py-3 text-left text-sm font-normal text-667085 uppercase tracking-wider whitespace-nowrap"
-                        key={header.id}
-                      >
-                        {header.column.columnDef.header}
-                        {header.column.getCanSort() && (
-                          <span
-                            className="forArrow inline-block relative top-1.5"
-                            onClick={header.column.getToggleSortingHandler()}
-                          >
-                            {header.column.getIsSorted() === "asc" ? (
-                              <ChevronUp className="cursor-pointer" />
-                            ) : header.column.getIsSorted() === "desc" ? (
-                              <ChevronDown className="cursor-pointer" />
-                            ) : (
-                              <ChevronUp className="cursor-pointer" />
-                            )}
-                          </span>
-                        )}
-                      </th>
-                    ))}
-                  </tr>
-                ))}
-              </thead>
-              <tbody className="bg-white divide-y divide-D0D5DD divide-dashed">
-                {table.getRowModel().rows.map((row) => (
-                  // console.log(row)
-                  <tr className="tr" key={row.id}>
-                    {row.getVisibleCells().map((cell) => (
-                      <td
-                        className="td pl-0 pr-4 py-4 whitespace-normal text-sm text-344054 font-normal"
-                        key={cell.id}
-                      >
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext()
-                        )}
-                      </td>
-                    ))}
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+            <div className="outer-table-div overflow-x-auto">
+              <table className="min-w-full divide-y divide-D0D5DD divide-dashed">
+                <thead>
+                  {table.getHeaderGroups().map((headerGroup) => (
+                    <tr className="tr" key={headerGroup.id}>
+                      {headerGroup.headers.map((header) => (
+                        <th
+                          className="th relative pl-0 pr-4 py-3 text-left text-sm font-normal text-667085 uppercase tracking-wider whitespace-nowrap align-bottom"
+                          key={header.id}
+                        >
+                          {header.column.columnDef.header}
+                          {header.column.getCanSort() && (
+                            <span
+                              className="forArrow inline-block relative top-1.5"
+                              onClick={header.column.getToggleSortingHandler()}
+                            >
+                              {header.column.getIsSorted() === "asc" ? (
+                                <ChevronUp className="cursor-pointer" />
+                              ) : header.column.getIsSorted() === "desc" ? (
+                                <ChevronDown className="cursor-pointer" />
+                              ) : (
+                                <ChevronUp className="cursor-pointer" />
+                              )}
+                            </span>
+                          )}
+                        </th>
+                      ))}
+                    </tr>
+                  ))}
+                </thead>
+                <tbody className="bg-white divide-y divide-D0D5DD divide-dashed">
+                  {table.getRowModel().rows.map((row) => (
+                    // console.log(row)
+                    <tr className="tr" key={row.id}>
+                      {row.getVisibleCells().map((cell) => (
+                        <td
+                          className="td pl-0 pr-4 py-4 whitespace-normal text-sm text-344054 font-normal"
+                          key={cell.id}
+                        >
+                          {flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext()
+                          )}
+                        </td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
             {/* pagination start */}
             {/* {showpaginationButtons != undefined && ( */}
-            <div className="flex justify-between items-center mt-4 py-3">
+            <div className="flex justify-between items-center mt-4 py-3 max-[415px]:justify-center max-[415px]:gap-[5px]">
               <button
                 onClick={() =>
                   table.setPageIndex(table.getState().pagination.pageIndex - 1)
@@ -609,9 +611,11 @@ const PropertyManagementtable = () => {
                 className="border border-D0D5DD font-semibold px-3.5 py-2 flex text-344054 text-sm gap-2"
               >
                 <ArrowLeft className="text-344054 w-5 h-5" />
-                Previous
+                <span className="2xl:block xl:block lg:block md:block sm:block max-[415px]:hidden">
+                    Previous
+                  </span>
               </button>
-              <div className="flex-1 flex justify-center items-center space-x-1">
+              <div className="flex-1 flex justify-center items-center space-x-1 max-[415px]:flex-none">
                 {generatePageNumbers().map((pageNumber, index) =>
                   pageNumber === "..." ? (
                     <span
@@ -642,7 +646,9 @@ const PropertyManagementtable = () => {
                 disabled={!table.getCanNextPage()}
                 className={`border border-D0D5DD font-semibold px-4 py-2 flex text-344054 text-sm gap-2`}
               >
-                Next
+                <span className="max-[415px]:hidden">
+                    Next
+                  </span>
                 <ArrowRight className="text-344054 w-5 h-5" />
               </button>
             </div>

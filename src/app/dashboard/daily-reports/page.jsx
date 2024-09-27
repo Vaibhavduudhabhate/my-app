@@ -136,7 +136,7 @@ const DailyReport = () => {
                 linkTitle="Add New Report"
                 // linkIcon={Plus}
             />
-            <div className="m-8 bg-white text-black border-1x border-border-A4A4A9">
+            <div className="2xl:m-8 xl:m-8 lg:m-4 md:m-4 sm:m-4 m-2 bg-white text-black border-1x border-border-A4A4A9">
                 {/* <div className="p-4 flex justify-between flex-wrap items-center">
                     <div className="w-full md:w-4/12 mb-2 md:mb-0">
                         <h3 className="text-lg font-normal text-101828">

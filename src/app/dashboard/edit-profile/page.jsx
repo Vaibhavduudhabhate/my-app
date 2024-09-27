@@ -13,9 +13,9 @@ const Editprofile = () => {
         <>
     <Comnavbar comHeading="Edit Profile" comPara="Manage your profile, change your password and much more."  />
 
-    <div>
+    <div className='max-[1025px]:flex max-[1025px]:items-center max-[1025px]:justify-center'>
         <div className="container w-full">     
-            <div className="flex flex-col gap-4 lg:flex-row md:flex-col sm:flex-col sm:h-[100%] h-[404px] px-[32px] pt-[32px]">
+            <div className="flex flex-col gap-4 lg:flex-row md:flex-col sm:flex-col sm:h-[100%] h-[404px] max-[786px]:h-full px-[32px] pt-[32px]">
                 <EditUserPro />
                 <ResetPassword />
                
@@ -118,7 +118,7 @@ function EditUserPro() {
       })
     return (
         <>
-           <div className="basis-[57%] p-[16px] bg-white border border-gray-400 ">
+           <div className="basis-[57%] max-[786px]:basis-[100% p-[16px] bg-white border border-gray-400 ">
                   <form className='h-full' onSubmit={formik.handleSubmit}>
                     <div className="flex h-full flex-col justify-between">
                         <div className="profileInnercontainer w-full flex flex-row">
@@ -140,8 +140,8 @@ function EditUserPro() {
                                                 <div className="error text-red text-sm font-normal mt-1.5">{formik.errors.userFullName}</div>
                                             )}
                                         </label>
-                                        <div className="mailNofields flex flex-row mt-[20px]">
-                                            <label className="block w-[50%] mr-[20px]">
+                                        <div className="mailNofields flex max-[600px]:flex-col flex-row mt-[20px]">
+                                            <label className="block w-[50%] max-[600px]:w-[100%] mr-[20px]">
                                                 <span className=" block text-sm font-medium text-slate-700">
                                                     Email Address
                                                 </span>
@@ -150,7 +150,7 @@ function EditUserPro() {
                                                     <div className="error text-red text-sm font-normal mt-1.5">{formik.errors.email}</div>
                                                 )}
                                             </label>
-                                            <label className="block w-[50%]">
+                                            <label className="block w-[50%] max-[600px]:w-[100%]">
                                                 <span className=" block text-sm font-medium text-slate-700">
                                                 Mobile Number
                                                 </span>
@@ -217,7 +217,7 @@ function ResetPassword() {
       })
     return (
         <>
-        <div className="basis-[43%]">
+        <div className="basis-[43%] max-[786px]:basis-[100%]">
             <div className="p-[16px] bg-white border border-gray-400  flex flex-col justify-between">
                 <form onSubmit={formik.handleSubmit}>
                     <div className="profileEditsectioin basis-[76%]">

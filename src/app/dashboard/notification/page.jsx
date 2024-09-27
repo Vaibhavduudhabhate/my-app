@@ -3,14 +3,19 @@ import Comnavbar from '@/components/Comnavbar';
 import { X, FileText } from "feather-icons-react";
 import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Loading from '@/components/Loading';
 
 const Notification = () => {
     const [userData, setUserData] = useState('');
     const fetchCalled = useRef(false);
+    const notificationDataLoading = useRef(true);
     const router = useRouter();
 
     // Function to fetch notification data
     const fetchNotifications = () => {
+        notificationDataLoading.current = true;
+        console.log(notificationDataLoading);
+        
         fetch('/api/notification-listing', { method: "GET", cache: "no-cache" })
             .then(response => {
                 if (!response.ok) {
@@ -19,12 +24,16 @@ const Notification = () => {
                 return response.json();
             })
             .then(records => {
-                console.log(records);
+                // console.log(records);
                 setUserData(records);
+                // notificationDataLoading.current = false
             })
             .catch(error => {
                 console.log(error);
-            });
+            })
+            .finally( () => {
+                notificationDataLoading.current = false
+            })
     };
 
     // Fetch notifications on component mount
@@ -37,6 +46,9 @@ const Notification = () => {
     // Function to handle notification status update
     const handleNotificationStatus = async (notification_id, status, report_id) => {
         if (status != "read") {
+            console.log(notificationDataLoading);
+            
+            notificationDataLoading.current = true;
             try {
                 const response = await fetch('/api/notification-read-api', {
                     method: "POST",
@@ -47,10 +59,13 @@ const Notification = () => {
                     throw new Error('Network response was not ok');
                 }
                 const records = await response.json();
-                console.log("records", records);
+                // console.log("records", records);
                 fetchNotifications();  // Re-fetch notifications after status update
             } catch (error) {
                 console.error('Error fetching data:', error);
+            }
+            finally{
+                notificationDataLoading.current = false;
             }
         }
         else {
@@ -83,7 +98,8 @@ const Notification = () => {
         <div>
             <Comnavbar comHeading="Manage your Notifications" comPara="Set your notification according to your preference." />
             <div className='m-8 bg-white text-black border-1x border-border-A4A4A9'>
-                <div className='relative h-[100vh]'>
+                {/* <div className='relative h-[100vh]'> */}
+                <div className='relative'>
                     <div>
                         <div className="p-4 border-b-[1px] border-[#E2E8F0] flex justify-between flex-wrap items-center">
                             <div className="w-full md:w-4/12 mb-2 md:mb-0">
@@ -98,44 +114,45 @@ const Notification = () => {
                         </div>
                     </div>
                     <div className='h-[81vh] overflow-auto'>
-                        {
-                            userData && userData.length > 0 ? (userData.map((notification) => (
-                                <div
-                                    key={notification.id}
-                                    onClick={() => { handleNotificationStatus(notification.id, notification.status, notification.report_id) }}
-                                    className={`grid grid-cols-9 py-[20px] px-[40px] cursor-pointer ${notification.status === 'read' ? 'bg-white' : 'bg-[#E6EAEB]'
-                                        }`}
-                                >
-                                    <div className='text-start flex items-center  '>
-                                        <img className={`w-[10px] h-[10px] items-center justify-center mr-[10px] ${notification.status === 'read' ? "invisible" : 'block'}`} src="/Dot.png" alt="Dot" srcset="" />
-                                        <div className={`flex w-[60px] h-[60px]  rounded-[100%] items-center justify-center ${notification.status === 'read' ? "bg-[#E6EAEB]" : 'bg-white'}`}>
-                                            <FileText className="h-[30px] w-[30px] text-black " />
+                        <div className="outer-div max-[843px]:w-[900px]">
+                            { notificationDataLoading.current == true ? (<Loading />) : 
+                                userData && userData.length > 0 ? (userData.map((notification) => (
+                                    <div
+                                        key={notification.id}
+                                        onClick={() => { handleNotificationStatus(notification.id, notification.status, notification.report_id) }}
+                                        className={`grid grid-cols-9 py-[20px] 2xl:px-[40px] xl:px-[20px] md:px-[20px] cursor-pointer ${notification.status === 'read' ? 'bg-white' : 'bg-[#E6EAEB]'
+                                            }`}
+                                    >
+                                        <div className='text-start flex items-center  '>
+                                            <img className={`w-[10px] h-[10px] items-center justify-center mr-[10px] ${notification.status === 'read' ? "invisible" : 'block'}`} src="/Dot.png" alt="Dot" srcset="" />
+                                            <div className={`flex w-[60px] h-[60px]  rounded-[100%] items-center justify-center ${notification.status === 'read' ? "bg-[#E6EAEB]" : 'bg-white'}`}>
+                                                <FileText className="h-[30px] w-[30px] text-black " />
+                                            </div>
+                                        </div>
+                                        <div className='col-span-7 flex items-center'>
+                                            <div className="p font-bold text-[18px] mr-2">
+                                                {`${notification.property_name}`}
+                                            </div>
+                                            <div>
+                                                {`${notification.message}`}
+                                            </div>
+                                        </div>
+                                        <div className='text-end flex items-center justify-end'>
+                                            {formatTimeAgo(notification.createdAt)}
                                         </div>
                                     </div>
-                                    <div className='col-span-7 flex items-center'>
-                                        <div className="p font-bold text-[18px] mr-2">
-                                            {`${notification.property_name}`}
+                                ))) : (
+                                    <>
+                                        <div className='absolute top-[50%] left-[50%] transform -translate-x-[50px] -translate-y-[50px] text-xl text-344054 font-normal'>
+                                            No Data Found
                                         </div>
-                                        <div>
-                                            {`${notification.message}`}
-                                        </div>
-                                    </div>
-                                    <div className='text-end flex items-center justify-end'>
-                                        {formatTimeAgo(notification.createdAt)}
-                                    </div>
-                                </div>
-                            ))) : (
-                                <>
-                                    <div className='absolute top-[50%] left-[50%] transform -translate-x-[50px] -translate-y-[50px] text-xl text-344054 font-normal'>
-                                        No Data Found
-                                    </div>
-                                </>
-                            )
-                        }
+                                    </>
+                                )
+                            }
+                        </div>
                     </div>
                     <div>
-                        <div className="absolute 
-                        w-full bottom-0 text-center p-4 flex justify-between flex-wrap items-center">
+                        <div className="w-full bottom-0 text-center flex justify-between flex-wrap items-center border-[1px] border-[#E2E8F0]">
                             <div className="flex text-center w-full py-[8px] px-[16px]">
                                 <div className="flex text-center w-full justify-center">
                                     <img className='h-[48px]' src="/logo_horizontal_darkgrey.png" alt="" />

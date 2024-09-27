@@ -119,7 +119,7 @@ export default function Dashboard() {
         comPara="Your overview hub for seamless management."
       />
       <div className="p-8 text-gray-900">
-        <div className="grid grid-cols-3 gap-3 mb-3">
+        <div className="grid 2xl:grid-cols-3 xl:grid-cols-3 lg:grid-cols-3 md:grid-cols-2 gap-3 mb-3">
           <Boxes
             boxLeftTitle={"Collections"}
             boxLeftIcon={Server}

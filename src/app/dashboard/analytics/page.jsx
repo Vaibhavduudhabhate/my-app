@@ -110,36 +110,36 @@ const Analytics = () => {
     { header: "Action", accessorKey: "action" },
   ];
 
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    if (isNaN(date.getTime())) return null;
+  // const formatDate = (dateString) => {
+  //   const date = new Date(dateString);
+  //   if (isNaN(date.getTime())) return null;
 
-    const options = { month: "long" };
-    const day = String(date.getDate()).padStart(2, "0");
-    const month = new Intl.DateTimeFormat("en-US", options).format(date);
-    const year = date.getFullYear();
+  //   const options = { month: "long" };
+  //   const day = String(date.getDate()).padStart(2, "0");
+  //   const month = new Intl.DateTimeFormat("en-US", options).format(date);
+  //   const year = date.getFullYear();
 
-    return `${day} ${month} ${year}`;
-  };
+  //   return `${day} ${month} ${year}`;
+  // };
 
   // Function to update `createdAt` fields in the original data
-  const updateCreatedAtFieldsInPlace = (data) => {
-    data.forEach((item) => {
-      // Update `createdAt` field at top level
-      if (item.createdAt) {
-        item.createdAt = formatDate(item.createdAt);
-      }
+  // const updateCreatedAtFieldsInPlace = (data) => {
+  //   data.forEach((item) => {
+  //     // Update `createdAt` field at top level
+  //     if (item.createdAt) {
+  //       item.createdAt = formatDate(item.createdAt);
+  //     }
 
-      // Update `createdAt` field inside `propertyDetails` if it exists
-      if (item.propertyDetails && item.propertyDetails.createdAt) {
-        item.propertyDetails.createdAt = formatDate(
-          item.propertyDetails.createdAt
-        );
-      }
-    });
-  };
+  //     // Update `createdAt` field inside `propertyDetails` if it exists
+  //     if (item.propertyDetails && item.propertyDetails.createdAt) {
+  //       item.propertyDetails.createdAt = formatDate(
+  //         item.propertyDetails.createdAt
+  //       );
+  //     }
+  //   });
+  // };
 
-  updateCreatedAtFieldsInPlace(analyticsData);
+  // updateCreatedAtFieldsInPlace(analyticsData);
 
   const toggleDropdown = (id) => {
     setIsOpen(isOpen === id ? null : id);

@@ -40,7 +40,8 @@ export default function Layout({ children }) {
         <>
             <section className="flex">
                 <Sidebar />
-                <div className="w-full bg-slate-200 pl-72">
+                {/* <div className="w-full bg-slate-200 2xl:translate-x-[288px] xl:translate-x-[288px] lg:translate-x-0 md:translate-x-0 sm:translate-x-0 translate-x-0 transition-transform duration-500"> */}
+                <div className="w-full bg-slate-200 2xl:pl-72 xl:pl-72 lg:pl-0 md:pl-0 sm:pl-0 pl-0">
                     {children}
                 </div>
             </section>
